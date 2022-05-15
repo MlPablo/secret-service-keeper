@@ -2,4 +2,4 @@ go.mod
 go.sum
 .idea
 requests
-some_extra data
+extradata
