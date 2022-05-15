@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"secretservice/keeper"
@@ -35,7 +36,8 @@ func TestSaveMessage(t *testing.T) {
 		t.Error("save is not 200")
 	}
 
-	saved_message, err := keeper.Keep.Get(keygenerator.Key_builder.Create())
+	key := keygenerator.Key_builder.Create()
+	saved_message, err := keeper.Keep.Get(key)
 	if err != nil {
 		t.Error("should be nill")
 	}
@@ -43,4 +45,12 @@ func TestSaveMessage(t *testing.T) {
 	if saved_message != test_message {
 		t.Error("not save properly")
 	}
+
+	result := w.Result()
+	defer result.Body.Close()
+	data, _ := ioutil.ReadAll(result.Body)
+	if !strings.Contains(string(data), key) {
+		t.Error("not right url")
+	}
+
 }
