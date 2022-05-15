@@ -7,8 +7,9 @@ import (
 
 func getRouter() *gin.Engine {
 	router := gin.Default()
-	router.LoadHTMLFiles("templates/index.html")
+	router.LoadHTMLFiles("templates/index.html", "templates/key.html")
 	router.GET("/", handlers.IndexView)
+	router.POST("/", handlers.SaveMessageView)
 	return router
 }
 

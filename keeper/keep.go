@@ -2,6 +2,8 @@ package keeper
 
 import "errors"
 
+var Keep = NewKeeper()
+
 type Keeper interface {
 	Get(key string) (string, error)
 	Set(key string, message string) error
@@ -31,4 +33,8 @@ func (d DummyKepper) Set(key, message string) error {
 
 func (d DummyKepper) Delete(key string) {
 	delete(d.mem, key)
+}
+
+func NewKeeper() Keeper {
+	return DummyKepper{make(map[string]string)}
 }
