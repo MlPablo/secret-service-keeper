@@ -3,7 +3,16 @@ package keygenerator
 import "testing"
 
 func TestDummyKeyCreate(t *testing.T) {
-	if Key.Create() != "test" {
-		t.Error("Should return test")
+	storage := make(map[string]bool)
+	for i := 0; i < 1000; i++ {
+		v, err := Key.Create()
+		if _, ok := storage[v]; ok {
+			t.Error("Not unique")
+		} else {
+			storage[v] = true
+		}
+		if err != nil {
+			t.Error("Should be nilled")
+		}
 	}
 }

@@ -14,7 +14,10 @@ func IndexView(c *gin.Context) {
 
 func SaveMessageView(c *gin.Context) {
 	message := c.PostForm("message")
-	key := keygenerator.Key.Create()
+	key, err := keygenerator.Key.Create()
+	if err != nil {
+		c.String(http.StatusBadRequest, "Cannot create key")
+	}
 	keeper.Keep.Set(key, message)
 	c.HTML(http.StatusOK, "key.html", gin.H{"key": fmt.Sprintf("http://%s/%s", c.Request.Host, key)})
 }
