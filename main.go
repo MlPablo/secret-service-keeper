@@ -7,9 +7,10 @@ import (
 
 func getRouter() *gin.Engine {
 	router := gin.Default()
-	router.LoadHTMLFiles("templates/index.html", "templates/key.html")
+	router.LoadHTMLGlob("templates/*")
 	router.GET("/", handlers.IndexView)
 	router.POST("/", handlers.SaveMessageView)
+	router.GET("/:key", handlers.ReadMessageHandler)
 	return router
 }
 

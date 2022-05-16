@@ -18,3 +18,17 @@ func SaveMessageView(c *gin.Context) {
 	keeper.Keep.Set(key, message)
 	c.HTML(http.StatusOK, "key.html", gin.H{"key": fmt.Sprintf("http://%s/%s", c.Request.Host, key)})
 }
+
+func ReadMessageHandler(c *gin.Context) {
+	key := c.Param("key")
+	msg, err := keeper.Keep.Get(key)
+	if err != nil {
+		if err.Error() == "message not found" {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	c.HTML(http.StatusOK, "message.html", gin.H{"message": msg})
+}

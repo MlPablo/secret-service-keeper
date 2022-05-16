@@ -53,3 +53,37 @@ func TestSaveMessage(t *testing.T) {
 	}
 
 }
+
+func TestReadMessage(t *testing.T) {
+	testMessage := "hello World!"
+	key := keygenerator.Key.Create()
+	keeper.Keep.Set(key, testMessage)
+	router := getRouter()
+	request, _ := http.NewRequest("GET", fmt.Sprintf("/%s", key), nil)
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, request)
+	if w.Code != 200 {
+		t.Error("Response not 200")
+	}
+	result := w.Result()
+	defer result.Body.Close()
+	data, _ := ioutil.ReadAll(result.Body)
+	if !strings.Contains(string(data), testMessage) {
+		t.Error("result page without key")
+	}
+
+	if _, err := keeper.Keep.Get(key); err == nil {
+		t.Error("Key still in Keeper")
+	}
+}
+
+func TestReadMessageNotFound(t *testing.T) {
+	key := keygenerator.Key.Create()
+	router := getRouter()
+	request, _ := http.NewRequest("GET", fmt.Sprintf("/%s", key), nil)
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, request)
+	if w.Code != 404 {
+		t.Error("empty message must be 404")
+	}
+}
