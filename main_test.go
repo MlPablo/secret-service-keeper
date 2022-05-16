@@ -29,20 +29,19 @@ func TestIndexPageCase(t *testing.T) {
 }
 
 func TestSaveMessage(t *testing.T) {
-	test_message := "foo"
-	post_data := strings.NewReader(fmt.Sprintf("message=%s", test_message))
-	w := performRequest("POST", "/", post_data)
+	testmessage := "foo"
+	postdata := strings.NewReader(fmt.Sprintf("message=%s", testmessage))
+	w := performRequest("POST", "/", postdata)
 	if w.Code != 200 {
 		t.Error("save is not 200")
 	}
 
-	key := keygenerator.Key_builder.Create()
-	saved_message, err := keeper.Keep.Get(key)
+	key := keygenerator.Key.Create()
+	savedmessage, err := keeper.Keep.Get(key)
 	if err != nil {
 		t.Error("should be nill")
 	}
-	//fmt.Println("AAAAAAAAAAAAA", saved_message)
-	if saved_message != test_message {
+	if savedmessage != testmessage {
 		t.Error("not save properly")
 	}
 

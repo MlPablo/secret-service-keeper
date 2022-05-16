@@ -1,6 +1,6 @@
 package keygenerator
 
-var Key_builder = GetKeyBuilder()
+var Key = GetKeyBuilder()
 
 type KeyBuilder interface {
 	Create() string
