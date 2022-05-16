@@ -2,12 +2,12 @@ package keeper
 
 import "errors"
 
-var Keep = NewKeeper()
+//var Keep = NewKeeper()
 
 type Keeper interface {
 	Get(key string) (string, error)
 	Set(key string, message string) error
-	Delete(key string)
+	Delete(key string) error
 }
 
 type DummyKepper struct {
@@ -31,8 +31,9 @@ func (d DummyKepper) Set(key, message string) error {
 	return errors.New("ALready exists")
 }
 
-func (d DummyKepper) Delete(key string) {
+func (d DummyKepper) Delete(key string) error {
 	delete(d.mem, key)
+	return nil
 }
 
 func NewKeeper() Keeper {
