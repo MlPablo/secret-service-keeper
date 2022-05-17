@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"secretservice/keygenerator"
-	"secretservice/storage/keeper"
+	"secretservice/storage"
 	"sync"
 )
 
@@ -21,14 +21,14 @@ func SaveMessageView(c *gin.Context) {
 	if err != nil {
 		c.String(http.StatusBadRequest, "Cannot create key")
 	}
-	keeper.Keep.Set(key, message)
+	storage.Keep.Set(key, message)
 	c.HTML(http.StatusOK, "key.html", gin.H{"key": fmt.Sprintf("http://%s/%s", c.Request.Host, key)})
 }
 
 func ReadMessageHandler(c *gin.Context) {
 	key := c.Param("key")
 	mutex.Lock()
-	msg, err := keeper.Keep.Get(key)
+	msg, err := storage.Keep.Get(key)
 	mutex.Unlock()
 	if err != nil {
 		if err.Error() == "message not found" {

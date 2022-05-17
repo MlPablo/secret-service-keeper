@@ -5,18 +5,19 @@ import (
 	"errors"
 	"github.com/go-redis/redis/v8"
 	"secretservice/storage/keeper"
+	"time"
 )
 
 //var Keep = getRedisKeeper()
 
-const TTL = 0
+const TTL = 100 * time.Second
 
 type RedisKeeper struct {
 	cn  redis.Client
 	ctx context.Context
 }
 
-func getRedisKeeper() keeper.Keeper {
+func GetRedisKeeper() keeper.Keeper {
 	return RedisKeeper{*redis.NewClient(
 		&redis.Options{
 			Addr:     "localhost:6379",
@@ -26,9 +27,9 @@ func getRedisKeeper() keeper.Keeper {
 }
 
 func (d RedisKeeper) Get(key string) (string, error) {
-	val, err := d.cn.Get(d.ctx, key).Result()
+	val, err := d.cn.GetDel(d.ctx, key).Result()
 	if err == redis.Nil {
-		return "", errors.New("Not found")
+		return "", errors.New("message not found")
 	}
 	return val, err
 }

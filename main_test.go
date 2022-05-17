@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"secretservice/keygenerator"
-	"secretservice/storage/keeper"
+	"secretservice/storage"
 	"strings"
 	"testing"
 )
@@ -36,12 +36,12 @@ func TestSaveMessage(t *testing.T) {
 		t.Error("save is not 200")
 	}
 	key, _ := keygenerator.Key.Create()
-	_, err := keeper.Keep.Get(key)
+	_, err := storage.Keep.Get(key)
 	if err == nil {
 		t.Error("should be nill")
 	}
-	keeper.Keep.Set(key, testmessage)
-	savedmessage, _ := keeper.Keep.Get(key)
+	storage.Keep.Set(key, testmessage)
+	savedmessage, _ := storage.Keep.Get(key)
 	if savedmessage != testmessage {
 		t.Error("not save properly")
 	}
@@ -50,7 +50,7 @@ func TestSaveMessage(t *testing.T) {
 func TestReadMessage(t *testing.T) {
 	testMessage := "hello World!"
 	key, _ := keygenerator.Key.Create()
-	keeper.Keep.Set(key, testMessage)
+	storage.Keep.Set(key, testMessage)
 	router := getRouter()
 	request, _ := http.NewRequest("GET", fmt.Sprintf("/%s", key), nil)
 	w := httptest.NewRecorder()
@@ -65,7 +65,7 @@ func TestReadMessage(t *testing.T) {
 		t.Error("result page without key")
 	}
 
-	if _, err := keeper.Keep.Get(key); err == nil {
+	if _, err := storage.Keep.Get(key); err == nil {
 		t.Error("Key still in Keeper")
 	}
 }
@@ -87,7 +87,7 @@ func TestReadMessageNotFound(t *testing.T) {
 func TestOneReaderAtaTime(t *testing.T) {
 	testMessage := "hello World!"
 	key, _ := keygenerator.Key.Create()
-	keeper.Keep.Set(key, testMessage)
+	storage.Keep.Set(key, testMessage)
 	router := getRouter()
 	resultChannel := make(chan int, 100)
 
@@ -109,4 +109,8 @@ func TestOneReaderAtaTime(t *testing.T) {
 	if twozz != 1 {
 		t.Error("Should be only 1 ok")
 	}
+}
+
+func TestMessageLiveTime(t *testing.T) {
+
 }

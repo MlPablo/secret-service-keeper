@@ -1,6 +1,8 @@
 package keeper
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestKeeperSet(t *testing.T) {
 	keeper := DummyKepper{make(map[string]string)}
