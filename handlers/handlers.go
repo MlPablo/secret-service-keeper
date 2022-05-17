@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"secretservice/keeper"
 	"secretservice/keygenerator"
+	"secretservice/storage/keeper"
+	"sync"
 )
+
+var mutex sync.Mutex
 
 func IndexView(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", nil)
@@ -24,7 +27,9 @@ func SaveMessageView(c *gin.Context) {
 
 func ReadMessageHandler(c *gin.Context) {
 	key := c.Param("key")
+	mutex.Lock()
 	msg, err := keeper.Keep.Get(key)
+	mutex.Unlock()
 	if err != nil {
 		if err.Error() == "message not found" {
 			c.AbortWithStatus(http.StatusNotFound)

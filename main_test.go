@@ -6,8 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"secretservice/keeper"
 	"secretservice/keygenerator"
+	"secretservice/storage/keeper"
 	"strings"
 	"testing"
 )
@@ -35,9 +35,7 @@ func TestSaveMessage(t *testing.T) {
 	if w.Code != 200 {
 		t.Error("save is not 200")
 	}
-
 	key, _ := keygenerator.Key.Create()
-
 	_, err := keeper.Keep.Get(key)
 	if err == nil {
 		t.Error("should be nill")
@@ -47,15 +45,6 @@ func TestSaveMessage(t *testing.T) {
 	if savedmessage != testmessage {
 		t.Error("not save properly")
 	}
-
-	result := w.Result()
-	defer result.Body.Close()
-	data, _ := ioutil.ReadAll(result.Body)
-	fmt.Println(string(data), key)
-	//if !strings.Contains(string(data), key) {
-	//	t.Error("not right url")
-	//}
-
 }
 
 func TestReadMessage(t *testing.T) {
@@ -92,5 +81,32 @@ func TestReadMessageNotFound(t *testing.T) {
 	router.ServeHTTP(w, request)
 	if w.Code != 404 {
 		t.Error("empty message must be 404")
+	}
+}
+
+func TestOneReaderAtaTime(t *testing.T) {
+	testMessage := "hello World!"
+	key, _ := keygenerator.Key.Create()
+	keeper.Keep.Set(key, testMessage)
+	router := getRouter()
+	resultChannel := make(chan int, 100)
+
+	for i := 0; i < 200; i++ {
+		go func(c chan int) {
+			request, _ := http.NewRequest("GET", fmt.Sprintf("/%s", key), nil)
+			w := httptest.NewRecorder()
+			router.ServeHTTP(w, request)
+			resultChannel <- w.Code
+		}(resultChannel)
+	}
+	twozz := 0
+	for i := 0; i < 200; i++ {
+		req := <-resultChannel
+		if req == 200 {
+			twozz++
+		}
+	}
+	if twozz != 1 {
+		t.Error("Should be only 1 ok")
 	}
 }

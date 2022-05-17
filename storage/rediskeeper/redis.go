@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"github.com/go-redis/redis/v8"
-	"secretservice/keeper"
+	"secretservice/storage/keeper"
 )
 
-var Keep = getRedisKeeper()
+//var Keep = getRedisKeeper()
 
 const TTL = 0
 

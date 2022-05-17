@@ -1,8 +1,10 @@
 package keeper
 
-import "errors"
+import (
+	"errors"
+)
 
-//var Keep = NewKeeper()
+var Keep = NewKeeper()
 
 type Keeper interface {
 	Get(key string) (string, error)
@@ -19,6 +21,7 @@ func (d DummyKepper) Get(key string) (string, error) {
 	if !ok {
 		return "", errors.New("message not found")
 	}
+	//time.Sleep(time.Second)
 	d.Delete(key)
 	return v, nil
 }
