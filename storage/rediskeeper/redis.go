@@ -10,8 +10,6 @@ import (
 
 //var Keep = getRedisKeeper()
 
-const TTL = 100 * time.Second
-
 type RedisKeeper struct {
 	cn  redis.Client
 	ctx context.Context
@@ -34,8 +32,9 @@ func (d RedisKeeper) Get(key string) (string, error) {
 	return val, err
 }
 
-func (d RedisKeeper) Set(key, message string) error {
-	return d.cn.Set(d.ctx, key, message, TTL).Err()
+func (d RedisKeeper) Set(key, message string, ttl int) error {
+	err := d.cn.Set(d.ctx, key, message, time.Duration(ttl)*time.Second).Err()
+	return err
 }
 
 func (d RedisKeeper) Delete(key string) error {

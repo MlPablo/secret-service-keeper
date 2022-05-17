@@ -1,16 +1,19 @@
 package rediskeeper
 
-//func TestKeeperSet(t *testing.T) {
-//	keeper := GetRedisKeeper()
-//	key := "foo"
-//	text := "bar"
-//	keeper.Set(key, text)
-//	v, _ := keeper.Get(key)
-//	fmt.Println(v)
-//	if v != text {
-//		t.Error("Should be founded")
-//	}
-//}
+import (
+	"testing"
+)
+
+func TestKeeperSet(t *testing.T) {
+	keeper := GetRedisKeeper()
+	key := "foo"
+	text := "bar"
+	keeper.Set(key, text, 0)
+	v, _ := keeper.Get(key)
+	if v != text {
+		t.Error("Should be founded")
+	}
+}
 
 //	err := keeper.Set(key, text)
 //	if err == nil {

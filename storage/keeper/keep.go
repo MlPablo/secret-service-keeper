@@ -6,7 +6,7 @@ import (
 
 type Keeper interface {
 	Get(key string) (string, error)
-	Set(key string, message string) error
+	Set(key string, message string, ttl int) error
 	Delete(key string) error
 }
 
@@ -24,7 +24,7 @@ func (d DummyKepper) Get(key string) (string, error) {
 	return v, nil
 }
 
-func (d DummyKepper) Set(key, message string) error {
+func (d DummyKepper) Set(key, message string, ttl int) error {
 	if _, ok := d.mem[key]; !ok {
 		d.mem[key] = message
 		return nil

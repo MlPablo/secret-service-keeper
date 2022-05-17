@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"secretservice/keygenerator"
 	"secretservice/storage"
+	"strconv"
 	"sync"
 )
 
@@ -17,11 +18,13 @@ func IndexView(c *gin.Context) {
 
 func SaveMessageView(c *gin.Context) {
 	message := c.PostForm("message")
-	key, err := keygenerator.Key.Create()
+	ttl, err := strconv.Atoi(c.PostForm("ttl"))
 	if err != nil {
-		c.String(http.StatusBadRequest, "Cannot create key")
+		ttl = 0
+		//c.String(http.StatusBadRequest, "Cannot get time")
 	}
-	storage.Keep.Set(key, message)
+	key, err := keygenerator.Key.Create()
+	storage.Keep.Set(key, message, ttl)
 	c.HTML(http.StatusOK, "key.html", gin.H{"key": fmt.Sprintf("http://%s/%s", c.Request.Host, key)})
 }
 

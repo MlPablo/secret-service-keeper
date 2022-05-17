@@ -40,7 +40,7 @@ func TestSaveMessage(t *testing.T) {
 	if err == nil {
 		t.Error("should be nill")
 	}
-	storage.Keep.Set(key, testmessage)
+	storage.Keep.Set(key, testmessage, 0)
 	savedmessage, _ := storage.Keep.Get(key)
 	if savedmessage != testmessage {
 		t.Error("not save properly")
@@ -50,7 +50,7 @@ func TestSaveMessage(t *testing.T) {
 func TestReadMessage(t *testing.T) {
 	testMessage := "hello World!"
 	key, _ := keygenerator.Key.Create()
-	storage.Keep.Set(key, testMessage)
+	storage.Keep.Set(key, testMessage, 0)
 	router := getRouter()
 	request, _ := http.NewRequest("GET", fmt.Sprintf("/%s", key), nil)
 	w := httptest.NewRecorder()
@@ -87,11 +87,11 @@ func TestReadMessageNotFound(t *testing.T) {
 func TestOneReaderAtaTime(t *testing.T) {
 	testMessage := "hello World!"
 	key, _ := keygenerator.Key.Create()
-	storage.Keep.Set(key, testMessage)
+	storage.Keep.Set(key, testMessage, 0)
 	router := getRouter()
 	resultChannel := make(chan int, 100)
 
-	for i := 0; i < 200; i++ {
+	for i := 0; i < 2; i++ {
 		go func(c chan int) {
 			request, _ := http.NewRequest("GET", fmt.Sprintf("/%s", key), nil)
 			w := httptest.NewRecorder()
@@ -100,7 +100,7 @@ func TestOneReaderAtaTime(t *testing.T) {
 		}(resultChannel)
 	}
 	twozz := 0
-	for i := 0; i < 200; i++ {
+	for i := 0; i < 2; i++ {
 		req := <-resultChannel
 		if req == 200 {
 			twozz++

@@ -1,7 +1,7 @@
 package storage
 
-import "secretservice/storage/keeper"
+import "secretservice/storage/rediskeeper"
 
-//var Keep = rediskeeper.GetRedisKeeper()
+var Keep = rediskeeper.GetRedisKeeper()
 
-var Keep = keeper.NewKeeper()
+//var Keep = keeper.NewKeeper()
