@@ -23,9 +23,12 @@ func SaveMessageView(c *gin.Context) {
 		return
 	}
 	ttl, err := strconv.Atoi(c.PostForm("ttl"))
+	if !validateTTLDuration(ttl) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ttl too long"})
+		return
+	}
 	if err != nil {
 		ttl = 0
-		//c.String(http.StatusBadRequest, "Cannot get time")
 	}
 	key, err := keygenerator.Key.Create()
 	storage.Keep.Set(key, message, ttl)

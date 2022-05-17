@@ -121,3 +121,13 @@ func TestBigMessage(t *testing.T) {
 		t.Error("Must be error, because message too long but ", w.Code)
 	}
 }
+
+func TestMaxTTLVALIDATION(t *testing.T) {
+	testmessage := "foo"
+	ttl := "999999"
+	postdata := strings.NewReader(fmt.Sprintf("message=%s&ttl=%s", testmessage, ttl))
+	w := performRequest("POST", "/", postdata)
+	if w.Code != 400 {
+		t.Error("Must be error, because message too long but ", w.Code)
+	}
+}
