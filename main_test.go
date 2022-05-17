@@ -12,6 +12,8 @@ import (
 	"testing"
 )
 
+const MESSAGEMAXLENGTH = 1024
+
 func performRequest(method, url string, body io.Reader) *httptest.ResponseRecorder {
 	router := getRouter()
 	request, _ := http.NewRequest(method, url, body)
@@ -111,6 +113,11 @@ func TestOneReaderAtaTime(t *testing.T) {
 	}
 }
 
-func TestMessageLiveTime(t *testing.T) {
-
+func TestBigMessage(t *testing.T) {
+	testmessage := strings.Repeat("TEST1234", 1+MESSAGEMAXLENGTH/8)
+	postdata := strings.NewReader(fmt.Sprintf("message=%s", testmessage))
+	w := performRequest("POST", "/", postdata)
+	if w.Code != 400 {
+		t.Error("Must be error, because message too long but ", w.Code)
+	}
 }

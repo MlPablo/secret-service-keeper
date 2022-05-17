@@ -18,6 +18,10 @@ func IndexView(c *gin.Context) {
 
 func SaveMessageView(c *gin.Context) {
 	message := c.PostForm("message")
+	if !validateMessageLength(message) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "message too long"})
+		return
+	}
 	ttl, err := strconv.Atoi(c.PostForm("ttl"))
 	if err != nil {
 		ttl = 0
@@ -35,7 +39,7 @@ func ReadMessageHandler(c *gin.Context) {
 	mutex.Unlock()
 	if err != nil {
 		if err.Error() == "message not found" {
-			c.AbortWithStatus(http.StatusNotFound)
+			c.JSON(http.StatusNotFound, gin.H{"error": "message have been readen or wrong url or time's out"})
 			return
 		}
 		c.AbortWithStatus(http.StatusInternalServerError)
