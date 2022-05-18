@@ -131,3 +131,18 @@ func TestMaxTTLVALIDATION(t *testing.T) {
 		t.Error("Must be error, because message too long but ", w.Code)
 	}
 }
+
+func TestKeeperEncrypt(t *testing.T) {
+	testmessage := "foo"
+	postdata := strings.NewReader(fmt.Sprintf("message=%s", testmessage))
+	w := performRequest("POST", "/", postdata)
+	if w.Code != 200 {
+		t.Error("save is not 200")
+	}
+	key, _ := keygenerator.Key.Create()
+	storage.Keep.Set(key, testmessage, 0)
+	savedmessage, _ := storage.Keep.Get(key)
+	if savedmessage != testmessage {
+		t.Error("keeper not encrypt message")
+	}
+}

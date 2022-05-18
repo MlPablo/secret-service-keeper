@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"errors"
+	"secretservice/crypto"
 )
 
 type Keeper interface {
@@ -19,14 +20,21 @@ func (d DummyKepper) Get(key string) (string, error) {
 	if !ok {
 		return "", errors.New("message not found")
 	}
-	//time.Sleep(10 * time.Second)
+	encrypted, err := crypto.Decrypt(v)
+	if err != nil {
+		return "", err
+	}
 	d.Delete(key)
-	return v, nil
+	return encrypted, nil
 }
 
 func (d DummyKepper) Set(key, message string, ttl int) error {
+	encryptedMessage, err := crypto.Encrypt(message)
+	if err != nil {
+		return err
+	}
 	if _, ok := d.mem[key]; !ok {
-		d.mem[key] = message
+		d.mem[key] = encryptedMessage
 		return nil
 	}
 	return errors.New("ALready exists")

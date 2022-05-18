@@ -13,7 +13,11 @@ import (
 var mutex sync.Mutex
 
 func IndexView(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.html", nil)
+	c.HTML(
+		http.StatusOK,
+		"index.html",
+		gin.H{"maxTTL": MAXTTL, "maxMessageLenght": MAXMESSAGELENGTH},
+	)
 }
 
 func SaveMessageView(c *gin.Context) {

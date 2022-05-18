@@ -9,8 +9,8 @@ func TestKeeperSet(t *testing.T) {
 	key := "foo"
 	text := "bar"
 	keeper.Set(key, text, 0)
-	if keeper.mem[key] != text {
-		t.Error("Should be founded")
+	if keeper.mem[key] == text {
+		t.Error("Should be encrypted")
 	}
 	err := keeper.Set(key, text, 0)
 	if err == nil {

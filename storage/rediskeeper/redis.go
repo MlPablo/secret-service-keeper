@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/go-redis/redis/v8"
+	"secretservice/crypto"
 	"secretservice/storage/keeper"
 	"time"
 )
@@ -29,12 +30,19 @@ func (d RedisKeeper) Get(key string) (string, error) {
 	if err == redis.Nil {
 		return "", errors.New("message not found")
 	}
-	return val, err
+	decryptmsg, err := crypto.Decrypt(val)
+	if err != nil {
+		return "", err
+	}
+	return decryptmsg, nil
 }
 
 func (d RedisKeeper) Set(key, message string, ttl int) error {
-	err := d.cn.Set(d.ctx, key, message, time.Duration(ttl)*time.Second).Err()
-	return err
+	encmessage, err := crypto.Encrypt(message)
+	if err != nil {
+		return err
+	}
+	return d.cn.Set(d.ctx, key, encmessage, time.Duration(ttl)*time.Second).Err()
 }
 
 func (d RedisKeeper) Delete(key string) error {
