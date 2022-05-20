@@ -19,7 +19,7 @@ type RedisKeeper struct {
 func GetRedisKeeper() keeper.Keeper {
 	return RedisKeeper{*redis.NewClient(
 		&redis.Options{
-			Addr:     "localhost:6379",
+			Addr:     "storage:6379",
 			Password: "",
 			DB:       0,
 		}), context.Background()}

@@ -1,6 +1,8 @@
 package storage
 
-import "secretservice/storage/rediskeeper"
+import (
+	"secretservice/storage/rediskeeper"
+)
 
 var Keep = rediskeeper.GetRedisKeeper()
 

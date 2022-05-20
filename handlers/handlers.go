@@ -32,7 +32,7 @@ func SaveMessageView(c *gin.Context) {
 		return
 	}
 	if err != nil {
-		ttl = 0
+		ttl = 60
 	}
 	key, err := keygenerator.Key.Create()
 	storage.Keep.Set(key, message, ttl)
